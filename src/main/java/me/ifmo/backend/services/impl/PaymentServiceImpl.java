@@ -101,4 +101,40 @@ public class PaymentServiceImpl implements PaymentService {
                         "Payment for enrollment with id " + enrollmentId + " not found"
                 ));
     }
+
+    @Override
+    public void expirePayment(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId).orElseThrow(() -> new NotFoundException(
+                "Payment with id " + paymentId + " not found"
+        ));
+
+        if (payment.getStatus() != PaymentStatus.CREATED && payment.getStatus() != PaymentStatus.PENDING) {
+            return;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        payment.setStatus(PaymentStatus.EXPIRED);
+        payment.setUpdatedAt(now);
+
+        Enrollment enrollment = payment.getEnrollment();
+
+        if (enrollment.getStatus() == EnrollmentStatus.PENDING_PAYMENT) {
+            enrollment.setStatus(EnrollmentStatus.PAYMENT_EXPIRED);
+            enrollment.setUpdatedAt(now);
+            enrollmentRepository.save(enrollment);
+        }
+
+        paymentRepository.save(payment);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isPaymentExpired(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new NotFoundException("Payment with id " + paymentId + " not found"));
+
+        return (payment.getStatus() == PaymentStatus.CREATED || payment.getStatus() == PaymentStatus.PENDING)
+                && !payment.getExpiresAt().isAfter(LocalDateTime.now());
+    }
 }

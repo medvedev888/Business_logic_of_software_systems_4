@@ -47,4 +47,15 @@ public class PaymentTransactionService {
             }
         });
     }
+
+    public void expirePayment(Long paymentId) {
+        transactionTemplate.executeWithoutResult(status -> {
+            try {
+                paymentService.expirePayment(paymentId);
+            } catch (RuntimeException exception) {
+                status.setRollbackOnly();
+                throw exception;
+            }
+        });
+    }
 }

@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/courses")
+@RequestMapping("/api/courses")
 @PreAuthorize("hasAuthority('COURSE_READ')")
 public class CourseController {
 

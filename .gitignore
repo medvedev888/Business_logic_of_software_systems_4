@@ -32,4 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
+/tmlog.lck
+/tmlog2.log
+
 .DS_Store

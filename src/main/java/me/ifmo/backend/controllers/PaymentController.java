@@ -13,18 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/payments")
+@RequestMapping("/api/payments")
 public class PaymentController {
 
-    private final PaymentTransactionService paymentTransactionService;
     private final PaymentService paymentService;
     private final PaymentMapper paymentMapper;
-
-    @PostMapping("/enrollment/{enrollmentId}")
-    @PreAuthorize("hasAuthority('PAYMENT_CREATE') and @accessService.canCreatePaymentForEnrollment(#enrollmentId, authentication)")
-    public PaymentDTO createPayment(@PathVariable @Min(1) Long enrollmentId) {
-        return paymentMapper.toPaymentDTO(paymentTransactionService.createPayment(enrollmentId));
-    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('PAYMENT_READ_ALL') or @accessService.canAccessPayment(#id, authentication)")

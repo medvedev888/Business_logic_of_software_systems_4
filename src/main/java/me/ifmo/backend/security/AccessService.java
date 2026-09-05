@@ -56,23 +56,6 @@ public class AccessService {
                 .isPresent();
     }
 
-    public boolean canCreatePaymentForEnrollment(Long enrollmentId, Authentication authentication) {
-        if (isAdmin(authentication)) {
-            return true;
-        }
-
-        String currentUserEmail = getCurrentUserEmail(authentication);
-        if (currentUserEmail == null) {
-            return false;
-        }
-
-        return enrollmentRepository.findById(enrollmentId)
-                .map(Enrollment::getUser)
-                .map(User::getEmail)
-                .filter(currentUserEmail::equals)
-                .isPresent();
-    }
-
     public boolean canAccessPayment(Long paymentId, Authentication authentication) {
         if (isAdmin(authentication)) {
             return true;
