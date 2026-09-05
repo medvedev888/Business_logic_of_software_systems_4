@@ -34,3 +34,5 @@ build/
 
 /tmlog.lck
 /tmlog2.log
+
+.DS_Store
