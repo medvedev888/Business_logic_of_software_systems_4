@@ -10,6 +10,21 @@ logging:
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: INFO
 
+camunda:
+  bpm:
+    admin-user:
+      id: camunda
+      password: camunda
+      first-name: Camunda
+    database:
+      schema-update: true
+      schema-name: s368530
+      table-prefix: s368530.
+    jpa:
+      enabled: false
+    filter:
+      create: All tasks
+
 ---
 spring:
   jackson:
@@ -18,9 +33,6 @@ spring:
     activate:
       on-profile: local
 
-  mvc:
-    servlet:
-      path: /api
 
   datasource:
     xa:
@@ -36,8 +48,9 @@ spring:
         user: s368530
         password: P7Woe7Cwyk2MjZnN
         serverName: localhost
-        portNumber: 5432
+        portNumber: 5436
         databaseName: studs
+        currentSchema: s368530
 
   jpa:
     open-in-view: false
@@ -73,9 +86,6 @@ spring:
     activate:
       on-profile: helios
 
-  mvc:
-    servlet:
-      path: /api
 
   datasource:
     xa:
@@ -93,6 +103,7 @@ spring:
         serverName: pg
         portNumber: 5432
         databaseName: studs
+        currentSchema: s368530
 
   jpa:
     open-in-view: false

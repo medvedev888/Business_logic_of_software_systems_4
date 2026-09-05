@@ -18,27 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/enrollments")
+@RequestMapping("/api/enrollments")
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
     private final EnrollmentMapper enrollmentMapper;
-
-    @PostMapping
-    @PreAuthorize("hasAuthority('ENROLLMENT_CREATE')")
-    public EnrollmentDTO createEnrollment(@RequestBody @Valid CreateEnrollmentRequest request, Authentication authentication) {
-        return enrollmentMapper.toEnrollmentDTO(
-                enrollmentService.createEnrollment(authentication.getName(), request.getCourseId())
-        );
-    }
-
-    @PostMapping("/admin")
-    @PreAuthorize("hasAuthority('ENROLLMENT_CREATE_ALL')")
-    public EnrollmentDTO createEnrollmentForUser(@RequestBody @Valid AdminCreateEnrollmentRequest request) {
-        return enrollmentMapper.toEnrollmentDTO(
-                enrollmentService.createEnrollmentForUser(request.getUserId(), request.getCourseId())
-        );
-    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ENROLLMENT_READ_ALL') or @accessService.canAccessEnrollment(#id, authentication)")

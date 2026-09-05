@@ -1,5 +1,6 @@
 package me.ifmo.backend.config;
 
+import jakarta.servlet.DispatcherType;
 import me.ifmo.backend.security.jaas.DatabaseLoginModule;
 import me.ifmo.backend.security.jaas.JaasAuthorityGranter;
 import org.springframework.context.annotation.Bean;
@@ -17,39 +18,39 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import java.util.List;
 import java.util.Map;
 
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
     private static final String JAAS_LOGIN_CONTEXT = "application-jaas";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationProvider authenticationProvider) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/courses/**").hasAuthority("COURSE_READ")
-
-                        .requestMatchers(HttpMethod.POST, "/enrollments").hasAuthority("ENROLLMENT_CREATE")
-                        .requestMatchers(HttpMethod.POST, "/enrollments/admin").hasAuthority("ENROLLMENT_CREATE_ALL")
-                        .requestMatchers(HttpMethod.GET, "/enrollments/**").authenticated()
-
-                        .requestMatchers(HttpMethod.POST, "/payments/enrollment/**").hasAuthority("PAYMENT_CREATE")
-                        .requestMatchers(HttpMethod.GET, "/payments/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/payments/webhook").hasAuthority("PAYMENT_CALLBACK_HANDLE")
+                        .dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.FORWARD).permitAll()
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/camunda"),
+                                new AntPathRequestMatcher("/camunda/**"),
+                                new AntPathRequestMatcher("/api/error")
+                        ).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/courses/**", HttpMethod.GET.name())).hasAuthority("COURSE_READ")
+                        .requestMatchers(new AntPathRequestMatcher("/api/enrollments/**", HttpMethod.GET.name())).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/api/payments/webhook", HttpMethod.POST.name())).hasAuthority("PAYMENT_CALLBACK_HANDLE")
+                        .requestMatchers(new AntPathRequestMatcher("/api/payments/**", HttpMethod.GET.name())).authenticated()
                         .anyRequest().authenticated()
-                )
-                .authenticationProvider(authenticationProvider);
+                ).authenticationProvider(authenticationProvider);
 
         return http.build();
     }

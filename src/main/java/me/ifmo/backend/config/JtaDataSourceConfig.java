@@ -1,11 +1,16 @@
 package me.ifmo.backend.config;
 
+import com.atomikos.icatch.jta.UserTransactionImp;
+import com.atomikos.icatch.jta.UserTransactionManager;
 import com.atomikos.jdbc.AtomikosDataSourceBean;
+import jakarta.transaction.UserTransaction;
 import org.postgresql.xa.PGXADataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.transaction.jta.JtaTransactionManager;
+
 
 @Configuration
 public class JtaDataSourceConfig {
@@ -44,5 +49,28 @@ public class JtaDataSourceConfig {
         dataSource.setTestQuery(testQuery);
 
         return dataSource;
+    }
+
+    @Bean(initMethod = "init", destroyMethod = "close")
+    public UserTransactionManager atomikosTransactionManager() {
+        UserTransactionManager manager = new UserTransactionManager();
+        manager.setForceShutdown(false);
+        return manager;
+    }
+
+    @Bean
+    public UserTransaction atomikosUserTransaction() throws Exception {
+        UserTransactionImp transaction = new UserTransactionImp();
+        transaction.setTransactionTimeout(300);
+        return transaction;
+    }
+
+    @Primary
+    @Bean(name = "transactionManager")
+    public JtaTransactionManager transactionManager(
+            UserTransaction atomikosUserTransaction,
+            UserTransactionManager atomikosTransactionManager
+    ) {
+        return new JtaTransactionManager(atomikosUserTransaction, atomikosTransactionManager);
     }
 }
