@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/api/enrollments/**", HttpMethod.GET.name())).authenticated()
                         .requestMatchers(new AntPathRequestMatcher("/api/payments/webhook", HttpMethod.POST.name())).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/payments/**", HttpMethod.GET.name())).authenticated()
+                        .requestMatchers(new AntPathRequestMatcher("/api/users/register", HttpMethod.POST.name())).permitAll()
                         .anyRequest().authenticated()
                 ).authenticationProvider(authenticationProvider);
 

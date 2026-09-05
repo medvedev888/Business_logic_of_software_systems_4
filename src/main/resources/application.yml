@@ -24,6 +24,8 @@ camunda:
       enabled: false
     filter:
       create: All tasks
+    authorization:
+      enabled: true
 
 ---
 spring:
