@@ -47,7 +47,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/courses/**", HttpMethod.GET.name())).hasAuthority("COURSE_READ")
                         .requestMatchers(new AntPathRequestMatcher("/api/enrollments/**", HttpMethod.GET.name())).authenticated()
-                        .requestMatchers(new AntPathRequestMatcher("/api/payments/webhook", HttpMethod.POST.name())).hasAuthority("PAYMENT_CALLBACK_HANDLE")
+                        .requestMatchers(new AntPathRequestMatcher("/api/payments/webhook", HttpMethod.POST.name())).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/payments/**", HttpMethod.GET.name())).authenticated()
                         .anyRequest().authenticated()
                 ).authenticationProvider(authenticationProvider);

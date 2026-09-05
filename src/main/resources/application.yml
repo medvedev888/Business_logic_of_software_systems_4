@@ -76,7 +76,7 @@ atomikos:
 
 bank:
   base-url: http://localhost:1489
-  callback-url: http://localhost:1488/api/payments/webhook
+  callback-url: http://localhost:8080/api/payments/webhook
 
 ---
 spring:

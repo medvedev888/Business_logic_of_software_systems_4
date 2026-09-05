@@ -11,6 +11,9 @@ public final class ProcessVariables {
     public static final String PAYMENT_ID = "paymentId";
     public static final String PROVIDER_PAYMENT_ID = "providerPaymentId";
     public static final String PAYMENT_URL = "paymentUrl";
+    public static final String PAYMENT_STATUS = "paymentStatus";
+    public static final String FAILURE_REASON = "failureReason";
+    public static final String PAYMENT_EXPIRED = "paymentExpired";
 
     private ProcessVariables() {
     }

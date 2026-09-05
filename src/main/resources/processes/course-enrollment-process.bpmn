@@ -82,7 +82,7 @@
       <bpmn:outgoing>Flow_Message_Status</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_PaymentResult" messageRef="Message_PaymentResult"/>
     </bpmn:intermediateCatchEvent>
-    <bpmn:exclusiveGateway id="Gateway_PaymentStatus" name="Статус оплаты?" default="Flow_Status_Failed">
+    <bpmn:exclusiveGateway id="Gateway_PaymentStatus" name="Статус оплаты?">
       <bpmn:incoming>Flow_Message_Status</bpmn:incoming>
       <bpmn:outgoing>Flow_Status_Paid</bpmn:outgoing>
       <bpmn:outgoing>Flow_Status_Failed</bpmn:outgoing>
@@ -130,17 +130,23 @@
     <bpmn:sequenceFlow id="Flow_Start_Request" sourceRef="StartEvent_Enrollment" targetRef="UserTask_EnrollmentRequest"/>
     <bpmn:sequenceFlow id="Flow_Request_RequestType" sourceRef="UserTask_EnrollmentRequest" targetRef="Gateway_RequestType"/>
     <bpmn:sequenceFlow id="Flow_RequestType_Self" name="SELF" sourceRef="Gateway_RequestType" targetRef="Task_AuthorizeSelf">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${requestType == 'SELF'}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">
+            ${requestType == 'SELF'}
+        </bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_RequestType_Admin" name="ADMIN_FOR_USER" sourceRef="Gateway_RequestType" targetRef="Task_AuthorizeAdmin">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${requestType == 'ADMIN_FOR_USER'}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">
+            ${requestType == 'ADMIN_FOR_USER'}
+        </bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_SelfAuth_Merge" sourceRef="Task_AuthorizeSelf" targetRef="Gateway_AuthorizationMerge"/>
     <bpmn:sequenceFlow id="Flow_AdminAuth_Merge" sourceRef="Task_AuthorizeAdmin" targetRef="Gateway_AuthorizationMerge"/>
     <bpmn:sequenceFlow id="Flow_Merge_CheckCourse" sourceRef="Gateway_AuthorizationMerge" targetRef="Task_CheckCourse"/>
     <bpmn:sequenceFlow id="Flow_CheckCourse_Availability" sourceRef="Task_CheckCourse" targetRef="Gateway_CourseAvailable"/>
     <bpmn:sequenceFlow id="Flow_CourseAvailable" name="да" sourceRef="Gateway_CourseAvailable" targetRef="Task_CreateEnrollment">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${courseAvailable == true}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">
+            ${courseAvailable == true}
+        </bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_CourseUnavailable" name="нет" sourceRef="Gateway_CourseAvailable" targetRef="EndEvent_CourseUnavailable"/>
     <bpmn:sequenceFlow id="Flow_CreatePayment_Wait" sourceRef="Task_CreatePayment" targetRef="Gateway_WaitPayment"/>
@@ -149,15 +155,23 @@
     <bpmn:sequenceFlow id="Flow_Wait_Timer" sourceRef="Gateway_WaitPayment" targetRef="Event_ExpirationCheckTimer"/>
     <bpmn:sequenceFlow id="Flow_Message_Status" sourceRef="Event_PaymentResult" targetRef="Gateway_PaymentStatus"/>
     <bpmn:sequenceFlow id="Flow_Status_Paid" name="PAID" sourceRef="Gateway_PaymentStatus" targetRef="Task_PaymentPaid">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paymentStatus == 'PAID'}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">
+            ${paymentStatus == 'PAID'}
+        </bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Status_Failed" name="FAILED" sourceRef="Gateway_PaymentStatus" targetRef="Task_PaymentFailed"/>
+    <bpmn:sequenceFlow id="Flow_Status_Failed" name="FAILED" sourceRef="Gateway_PaymentStatus" targetRef="Task_PaymentFailed">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">
+            ${paymentStatus == 'FAILED'}
+        </bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Paid_ActiveEnd" sourceRef="Task_PaymentPaid" targetRef="EndEvent_Active"/>
     <bpmn:sequenceFlow id="Flow_Failed_FailedEnd" sourceRef="Task_PaymentFailed" targetRef="EndEvent_PaymentFailed"/>
     <bpmn:sequenceFlow id="Flow_Timer_CheckExpired" sourceRef="Event_ExpirationCheckTimer" targetRef="Task_CheckPaymentExpired"/>
     <bpmn:sequenceFlow id="Flow_CheckExpired_Gateway" sourceRef="Task_CheckPaymentExpired" targetRef="Gateway_PaymentExpired"/>
     <bpmn:sequenceFlow id="Flow_Expired_Expire" name="да" sourceRef="Gateway_PaymentExpired" targetRef="Task_ExpirePayment">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paymentExpired == true}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">
+            ${paymentExpired == true}
+        </bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Expire_ExpiredEnd" sourceRef="Task_ExpirePayment" targetRef="EndEvent_Expired"/>
   </bpmn:process>
