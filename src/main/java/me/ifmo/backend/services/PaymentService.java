@@ -11,4 +11,6 @@ public interface PaymentService {
     Payment getPaymentByEnrollmentId(Long enrollmentId);
 
     void expirePayment(Long paymentId);
+
+    boolean isPaymentExpired(Long paymentId);
 }

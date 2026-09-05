@@ -127,4 +127,14 @@ public class PaymentServiceImpl implements PaymentService {
 
         paymentRepository.save(payment);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isPaymentExpired(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new NotFoundException("Payment with id " + paymentId + " not found"));
+
+        return (payment.getStatus() == PaymentStatus.CREATED || payment.getStatus() == PaymentStatus.PENDING)
+                && !payment.getExpiresAt().isAfter(LocalDateTime.now());
+    }
 }
